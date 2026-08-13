@@ -3,6 +3,11 @@ package order;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
 
+import order.resilience.Bulkhead;
+import order.resilience.CircuitBreaker;
+import order.resilience.RetryBackoff;
+import order.resilience.Timeout;
+
 import java.io.IOException;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
@@ -10,11 +15,41 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class OrderService {
 
     private static final HttpClient httpClient =
             HttpClient.newHttpClient();
+
+    private static final String SLOW_SERVICE_URL =
+            System.getenv()
+                    .getOrDefault(
+                            "SLOW_SERVICE_URL",
+                            "http://localhost:8081"
+                    );
+
+    private static final String UNSTABLE_SERVICE_URL =
+            System.getenv()
+                    .getOrDefault(
+                            "UNSTABLE_SERVICE_URL",
+                            "http://localhost:8082"
+                    );
+
+    private static final String LIMITED_CAPACITY_SERVICE_URL =
+            System.getenv()
+                    .getOrDefault(
+                            "LIMITED_CAPACITY_SERVICE_URL",
+                            "http://localhost:8083"
+                    );
+
+    private static final String FLAPPING_SERVICE_URL =
+            System.getenv()
+                    .getOrDefault(
+                            "FLAPPING_SERVICE_URL",
+                            "http://localhost:8084"
+                    );
 
     public static void main(String[] args)
             throws Exception {
@@ -27,6 +62,14 @@ public class OrderService {
         server.createContext(
                 "/order",
                 OrderService::handleOrder
+        );
+
+        /*
+         * Allow multiple requests to be processed
+         * concurrently.
+         */
+        server.setExecutor(
+                Executors.newCachedThreadPool()
         );
 
         server.start();
@@ -133,7 +176,7 @@ public class OrderService {
             throws Exception {
 
         return callService(
-                "http://localhost:8081/data"
+                SLOW_SERVICE_URL + "/data"
         );
     }
 
@@ -146,7 +189,7 @@ public class OrderService {
             throws Exception {
 
         return callService(
-                "http://localhost:8082/data"
+                UNSTABLE_SERVICE_URL + "/data"
         );
     }
 
@@ -159,7 +202,7 @@ public class OrderService {
             throws Exception {
 
         return callService(
-                "http://localhost:8083/data"
+                LIMITED_CAPACITY_SERVICE_URL + "/data"
         );
     }
 
@@ -172,7 +215,7 @@ public class OrderService {
             throws Exception {
 
         return callService(
-                "http://localhost:8084/data"
+                FLAPPING_SERVICE_URL + "/data"
         );
     }
 

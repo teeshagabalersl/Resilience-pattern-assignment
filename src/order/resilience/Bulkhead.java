@@ -19,5 +19,26 @@ public class Bulkhead {
     // Bulkhead bulkhead = new Bulkhead(2);
     //
     // bulkhead.execute(() -> callDownstreamService());
+    //
+    // Expected output:
+    //
+    // When a request is received:
+    //
+    // Received order request
+    // Service = <serviceName>
+    // Bulkhead permit acquired
+    // HTTP GET → http://localhost:<portNumber>/data
+    //
+    // When the maximum number of concurrent requests is reached:
+    //
+    // Received order request
+    // Service = <serviceName>
+    // Bulkhead full - request rejected
+    // Order failed: Bulkhead full - request rejected
+    //
+    // After a request completes:
+    //
+    // Response status: 200
+    // Bulkhead permit released
 
 }

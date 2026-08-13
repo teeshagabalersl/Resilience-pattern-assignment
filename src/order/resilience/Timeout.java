@@ -20,5 +20,21 @@ public class Timeout {
     //         5,
     //         TimeUnit.SECONDS
     // );
+    //
+    // Expected output:
+    //
+    // When the operation completes within the timeout:
+    //
+    // Received order request
+    // Service = <serviceName>
+    // HTTP GET → http://localhost:<portNumber>/data
+    // Response status: 200
+    //
+    // When the operation exceeds the configured timeout:
+    //
+    // Received order request
+    // Service = <serviceName>
+    // HTTP GET → http://localhost:<portNumber>/data
+    // Order failed: Operation timed out after 5 seconds
 
 }

@@ -1,0 +1,36 @@
+services:
+
+  order-service:
+    build: .
+    command: java order.OrderService
+    ports:
+      - "8080:8080"
+    environment:
+      SLOW_SERVICE_URL: http://slow-service:8081
+      UNSTABLE_SERVICE_URL: http://unstable-service:8082
+      LIMITED_CAPACITY_SERVICE_URL: http://limited-capacity-service:8083
+      FLAPPING_SERVICE_URL: http://flapping-service:8084
+
+  slow-service:
+    build: .
+    command: java downstream.SlowService
+    ports:
+      - "8081:8081"
+
+  unstable-service:
+    build: .
+    command: java downstream.UnstableService
+    ports:
+      - "8082:8082"
+
+  limited-capacity-service:
+    build: .
+    command: java downstream.LimitedCapacityService
+    ports:
+      - "8083:8083"
+
+  flapping-service:
+    build: .
+    command: java downstream.FlappingService
+    ports:
+      - "8084:8084"

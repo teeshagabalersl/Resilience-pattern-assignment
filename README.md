@@ -6,13 +6,13 @@ Each resilience pattern can be tested independently by starting only the Order S
 
 ## Services
 
-| Service | Port | Resilience Pattern |
-|----------|------|--------------------|
-| Order Service | 8080 | Applies resilience patterns |
-| Slow Service | 8081 | Timeout |
-| Unstable Service | 8082 | Retry + Backoff |
-| Limited Capacity Service | 8083 | Bulkhead |
-| Flapping Service | 8084 | Circuit Breaker |
+| Service | Port |
+|----------|------
+| Order Service | 8080 |
+| Slow Service | 8081 |
+| Unstable Service | 8082 |
+| Limited Capacity Service | 8083 |
+| Flapping Service | 8084 |
 
 ---
 
@@ -59,16 +59,7 @@ Check running containers:
 docker compose ps
 ```
 
----
-
-## Stop the Services
-
-To stop and remove containers:
-
-```bash
-docker compose down
-```
-
+> Note: Docker Desktop must be running whenever you use Docker Compose to start or test the services.
 ---
 
 ## Rebuilding Images
@@ -97,11 +88,6 @@ docker compose up
 # Testing Individual Resilience Patterns
 
 For easier log analysis, start only the services required for a specific pattern.
-
-> **Note:** You only need to use `--build` the first time you start the
-> services, or when you make changes to the Java source code, `Dockerfile`, or
-> Docker Compose configuration. For subsequent runs without any changes, use
-> `docker compose up` without `--build`.
 
 > **Note:** Before testing a new resilience pattern, make sure any previously
 > running services are stopped. This avoids confusion between logs from
